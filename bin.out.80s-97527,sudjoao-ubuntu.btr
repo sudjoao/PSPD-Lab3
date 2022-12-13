@@ -1,0 +1,4 @@
+
+bin.out:97527 terminated with signal 11 at PC=7f6a8ce72995 SP=7ffcaacfe988.  Backtrace:
+/lib/x86_64-linux-gnu/libc.so.6(+0x1a0995)[0x7f6a8ce72995]
+/lib/x86_64-linux-gnu/libmpich.so.12(+0x2177c6)[0x7f6a8d1117c6]

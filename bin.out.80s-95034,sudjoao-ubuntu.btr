@@ -1,0 +1,12 @@
+
+bin.out:95034 terminated with signal 11 at PC=7fab27599995 SP=7fff6c56b988.  Backtrace:
+/lib/x86_64-linux-gnu/libc.so.6(+0x1a0995)[0x7fab27599995]
+/lib/x86_64-linux-gnu/libmpich.so.12(+0x2177c6)[0x7fab278387c6]
+/lib/x86_64-linux-gnu/libmpich.so.12(+0x260e01)[0x7fab27881e01]
+/lib/x86_64-linux-gnu/libmpich.so.12(+0x20b5a89)[0x7fab296d6a89]
+/lib/x86_64-linux-gnu/libmpich.so.12(+0x20b60f1)[0x7fab296d70f1]
+/lib/x86_64-linux-gnu/libmpich.so.12(PMPI_Send+0x481)[0x7fab27736041]
+./bin/bin.out(+0x150a)[0x55f9c4bef50a]
+/lib/x86_64-linux-gnu/libc.so.6(+0x29d90)[0x7fab27422d90]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80)[0x7fab27422e40]
+./bin/bin.out(+0x1245)[0x55f9c4bef245]
