@@ -1,15 +1,11 @@
 #include "send_recv.h"
 
-
-#define MAX_SIZE 4000
-
 int send_recv_algorithm(int argc, char * argv[]){
     int my_rank;
     char *msg;
-    int msg_tag = 0;
     int msg_size_tag = 1;
     int nprocess;
-    char end_message[4] = {'e', 'n', 'd', '\0'};
+    char end_message[4] = "end";
     t_words_qtt words_qtt = {
         .less_than_six = 0,
         .total = 0,
@@ -27,10 +23,10 @@ int send_recv_algorithm(int argc, char * argv[]){
         int received_message_size;
         char *received_message;
         while(1){
-            MPI_Recv(&received_message_size, INT_SIZE, MPI_INT, MASTER_RANK, msg_size_tag, MPI_COMM_WORLD, &status);
-            printf("%d\n", received_message_size);
+            MPI_Probe(MASTER_RANK, MSG_TAG, MPI_COMM_WORLD, &status);
+            MPI_Get_count(&status, MPI_CHAR, &received_message_size);
             received_message = malloc(received_message_size);
-            MPI_Recv(received_message, received_message_size, MPI_CHAR, MASTER_RANK, msg_tag, MPI_COMM_WORLD, &status);
+            MPI_Recv(received_message, received_message_size, MPI_CHAR, MASTER_RANK, MSG_TAG, MPI_COMM_WORLD, &status);
             if(!strcmp(received_message, end_message)){
                 free(received_message);
                 break;
@@ -68,10 +64,9 @@ int send_recv_algorithm(int argc, char * argv[]){
             if(j==0 && ch==EOF)
                 break;
             msg[j] = '\0';
-            MPI_Send(&msg_size, INT_SIZE, MPI_INT, i, msg_size_tag, MPI_COMM_WORLD);
-            MPI_Send(msg, msg_size++, MPI_CHAR, i, msg_tag, MPI_COMM_WORLD);
+            MPI_Send(msg, msg_size, MPI_CHAR, i, MSG_TAG, MPI_COMM_WORLD);
             free(msg);
-            msg = malloc(msg_size);
+            msg = malloc(++msg_size);
             sended_messages++;
             i++;
             if(i == nprocess){
@@ -99,8 +94,7 @@ int send_recv_algorithm(int argc, char * argv[]){
         }
         msg_size = 4;
         for(i=0; i<nprocess; i++){
-            MPI_Send(&msg_size, INT_SIZE, MPI_INT, i, msg_size_tag, MPI_COMM_WORLD);
-            MPI_Send(end_message, msg_size, MPI_CHAR, i, msg_tag, MPI_COMM_WORLD);
+            MPI_Send(end_message, msg_size, MPI_CHAR, i, MSG_TAG, MPI_COMM_WORLD);
         }
         printf("O arquivo enviado possui: %d palavras totais, %d delas são menores que seis e %d são maiores ou igual a seis.\n", words_qtt.total, words_qtt.less_than_six, words_qtt.others);
     }
