@@ -7,7 +7,7 @@
 #define MASTER_RANK 0
 #define INT_SIZE 1
 #define MIN_SIZE 128
-#define MAX_SIZE 10000000
+#define MAX_SIZE 4000
 #define TOTAL_TAG 3
 #define LESS_THAN_SIX_TAG 4
 #define OTHERS_TAG 5
@@ -71,7 +71,6 @@ int main(int argc, char * argv[]){
             MPI_Send(&words_qtt.total, INT_SIZE, MPI_INT, MASTER_RANK, TOTAL_TAG, MPI_COMM_WORLD);
             MPI_Send(&words_qtt.less_than_six, INT_SIZE, MPI_INT, MASTER_RANK, LESS_THAN_SIX_TAG, MPI_COMM_WORLD);
             MPI_Send(&words_qtt.others, INT_SIZE, MPI_INT, MASTER_RANK, OTHERS_TAG, MPI_COMM_WORLD);
-            // printf("[%d] A mensagem que recebi \n'%s'\nPossui: %d palavras totais, %d delas são menores que seis e %d são maiores ou igual a seis.\n", my_rank, received_message, words_qtt.total, words_qtt.less_than_six, words_qtt.others);
             words_qtt.less_than_six = 0;
             words_qtt.others = 0;
             words_qtt.total = 0;
@@ -83,11 +82,23 @@ int main(int argc, char * argv[]){
         FILE* ptr;
         int i=1;
         int sended_messages = 0;
-        ptr = fopen("test.txt", "a+");
+        ptr = fopen("test.txt", "r");
         if (NULL == ptr) {
             printf("file can't be opened \n");
         }
-        while(fgets(msg, msg_size, ptr) != NULL){
+        while(1){
+            char ch;
+            int j;
+            for(j=0; j<msg_size;j++){
+		        ch = fgetc(ptr);
+		        if(ch == EOF){
+                    break;
+                }
+                msg[j] = ch;
+            }
+            if(j==0 && ch==EOF)
+                break;
+            msg[j] = '\0';
             MPI_Send(&msg_size, INT_SIZE, MPI_INT, i, msg_size_tag, MPI_COMM_WORLD);
             MPI_Send(msg, msg_size++, MPI_CHAR, i, msg_tag, MPI_COMM_WORLD);
             free(msg);
@@ -99,6 +110,10 @@ int main(int argc, char * argv[]){
             }
             if(msg_size == MAX_SIZE){
                 msg_size = MIN_SIZE;
+            }
+
+            if(ch == EOF){
+                break;
             }
         }
 
